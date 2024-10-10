@@ -2,3 +2,11 @@ node_modules
 yarn.lock
 config.env
 .env
+/.idea/inspectionProfiles/Project_Default.xml
+/.idea/Dropit.iml
+/.idea/misc.xml
+/.idea/vcs.xml
+/.idea/workspace.xml
+/scripts/airports_data.csv
+/scripts/posts.csv
+/scripts/airports-extended.dat

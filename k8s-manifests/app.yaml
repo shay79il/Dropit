@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dropit-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dropit-app
+  template:
+    metadata:
+      labels:
+        app: dropit-app
+    spec:
+      containers:
+        - name: dropit-app
+          image: shay79il/dropit-app
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 3000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dropit-app-service
+spec:
+  selector:
+    app: dropit-app
+  ports:
+    - protocol: TCP
+      port: 3000
+      targetPort: 3000
+  type: ClusterIP

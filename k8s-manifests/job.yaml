@@ -1,0 +1,60 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: mongo-import-export-job
+spec:
+  template:
+    spec:
+      containers:
+        - name: mongo-import-export
+          image: shay79il/dropit-job
+          env:
+            - name: MONGODB_K8S_SVC
+              value: "mongodb"
+            - name: MONGODB_K8S_SVC_PORT
+              value: "27017"
+            - name: SERVER_K8S_SVC
+              value: "dropit-server-service"
+            - name: SERVER_K8S_SVC_PORT
+              value: "5050"
+            - name: DATABASE_NAME
+              value: "openflights"
+            - name: COLLECTION_NAME
+              value: "airports"
+            - name: DATA_URL
+              value: "https://raw.githubusercontent.com/jpatokal/openflights/master/data/airports-extended.dat"
+            - name: CSV_FILE_PATH
+              value: "/data"
+          volumeMounts:
+            - name: csv-storage
+              mountPath: /data
+      restartPolicy: Never
+      volumes:
+        - name: csv-storage
+          persistentVolumeClaim:
+            claimName: csv-pvc
+  backoffLimit: 4
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: csv-pv
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/data"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: csv-pvc
+spec:
+  storageClassName: standard
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
